@@ -18,4 +18,4 @@ No arquivo "codigo.txt" entre com uma expressão que siga a gramatica abaixo:
   + run main.py
 
 ### Saída
-  A execução irá gerar o "codigo.asm" que pode ser testado no simulador <b href="http://courses.missouristate.edu/KenVollmar/mars/"><u>MARS</u></b>
+  A execução irá gerar o "codigo.asm" que pode ser testado no simulador [<u>MARS</u>](http://courses.missouristate.edu/KenVollmar/mars/)
