@@ -32,6 +32,7 @@ class Parser:
         @self.pg.production('expression : expression SUB expression')
         @self.pg.production('expression : expression MULT expression')
         @self.pg.production('expression : expression DIV expression')
+        @self.pg.production('expression : expression POT expression')
         def expression(p):
             left = p[0]
             right = p[2]
@@ -99,6 +100,14 @@ class Parser:
                         self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
 
                 self.file.write("\tdiv $t1, $t1, $t2\n")
+
+            elif operator.gettokentype() == 'POT':
+                aux_x = left
+                aux_y = int(right) - 1
+                while aux_y > 0:
+                    self.file.write("\tli $t2, ".__add__(str(aux_x)).__add__("\n"))
+                    self.file.write("\tmul $t1, $t2, $t2\n")
+                    aux_y = aux_y - 1
 
         @self.pg.production('expression : NUMBER')
         def number(p):
