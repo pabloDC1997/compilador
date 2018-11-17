@@ -37,18 +37,34 @@ class Parser:
             right = p[2]
             operator = p[1]
             if operator.gettokentype() == 'SUM':
+                flag = 0
                 if left:
-                    self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
-                if right:
-                    self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                        flag = 1
+
+                if flag == 0:
+                    if left:
+                        self.file.write("\tli $t2, ".__add__(str(left)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
 
                 self.file.write("\tadd $t1, $t1, $t2\n")
 
             elif operator.gettokentype() == 'SUB':
+                flag = 0
                 if left:
-                    self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
-                if right:
-                    self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                        flag = 1
+
+                if flag == 0:
+                    if left:
+                        self.file.write("\tli $t2, ".__add__(str(left)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
 
                 self.file.write("\tsub $t1, $t1, $t2\n")
 
@@ -57,7 +73,7 @@ class Parser:
                 if left:
                     if right:
                         self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
-                        self.file.write("\tli $t1, ".__add__(str(right)).__add__("\n"))
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
                         flag = 1
 
                 if flag == 0:
@@ -69,11 +85,18 @@ class Parser:
                 self.file.write("\tmul $t1, $t1, $t2\n")
 
             elif operator.gettokentype() == 'DIV':
-
+                flag = 0
                 if left:
-                    self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
-                if right:
-                    self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                        flag = 1
+
+                if flag == 0:
+                    if left:
+                        self.file.write("\tli $t2, ".__add__(str(left)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
 
                 self.file.write("\tdiv $t1, $t1, $t2\n")
 
