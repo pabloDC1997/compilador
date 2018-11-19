@@ -33,6 +33,7 @@ class Parser:
         @self.pg.production('expression : expression MULT expression')
         @self.pg.production('expression : expression DIV expression')
         @self.pg.production('expression : expression POT expression')
+        @self.pg.production('expression : expression RESTO expression')
         def expression(p):
             left = p[0]
             right = p[2]
@@ -101,13 +102,41 @@ class Parser:
 
                 self.file.write("\tdiv $t1, $t1, $t2\n")
 
-            elif operator.gettokentype() == 'POT':
+            elif operator.gettokentype() == 'POT':# Not finished
                 aux_x = left
                 aux_y = int(right) - 1
                 while aux_y > 0:
                     self.file.write("\tli $t2, ".__add__(str(aux_x)).__add__("\n"))
                     self.file.write("\tmul $t1, $t2, $t2\n")
                     aux_y = aux_y - 1
+
+            elif operator.gettokentype() == 'RESTO':
+                flag = 0
+                interator = 1
+                if left:
+                    if right:
+                        self.file.write("\tli $t1, ".__add__(str(left)).__add__("\n"))
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+                        flag = 1
+
+                if flag == 0:
+                    if left:
+                        self.file.write("\tli $t2, ".__add__(str(left)).__add__("\n"))
+                    if right:
+                        self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
+
+                self.file.write("li $t1_aux, $t1 \n")
+                self.file.write("li $t2_aux, $t2\n")
+                self.file.write("li $interator, 0\n")
+
+                self.file.write("loop:")
+                self.file.write("\tadd $interator, interator, 1\n")
+                self.file.write("\tadd $t1_aux, $t1_aux, $t2_aux\n")
+                #FIXME testar condição de parada $t1_aux > t2_aux and goto loop if false
+                self.file.write("fimLoop:\n")
+
+                self.file.write("mul $t1_aux, $interator, $t2\n")
+                self.file.write("sub $t1, $t1, $t1_aux\n")
 
         @self.pg.production('expression : NUMBER')
         def number(p):
