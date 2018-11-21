@@ -7,9 +7,10 @@ class Parser:
         self.pg = ParserGenerator(
             ['NUMBER', 'PRINT', 'OPEN_PAREN', 'CLOSE_PAREN', 'SEMI_COLON', 'SUM', 'SUB', 'MULT', 'DIV', 'POT', 'RESTO'],
             precedence=[
-                ("left", ['SUM', 'SUB']),
-                ('left', ['MULT', 'DIV'])
-                        ]
+                ('left', ['SUM', 'SUB']),
+                ('left', ['MULT', 'DIV', 'RESTO']),
+                ('left', ['POT']),
+            ]
         )
         self.file = open("codigo.asm", "w")
         self.file.write(".data\n")
@@ -102,7 +103,7 @@ class Parser:
 
                 self.file.write("\tdiv $t1, $t1, $t2\n")
 
-            elif operator.gettokentype() == 'POT':# Not finished
+            elif operator.gettokentype() == 'POT':  # Not finished
                 aux_x = left
                 aux_y = int(right) - 1
                 while aux_y > 0:
@@ -125,18 +126,17 @@ class Parser:
                     if right:
                         self.file.write("\tli $t2, ".__add__(str(right)).__add__("\n"))
 
-                self.file.write("li $t1_aux, $t1 \n")
-                self.file.write("li $t2_aux, $t2\n")
-                self.file.write("li $interator, 0\n")
+                self.file.write("\tmove $t3, $t1 \n")
+                self.file.write("\tmove $t4, $t2\n")
+                self.file.write("\tli $t5, 0\n")
 
-                self.file.write("loop:")
-                self.file.write("\tadd $interator, interator, 1\n")
-                self.file.write("\tadd $t1_aux, $t1_aux, $t2_aux\n")
-                #FIXME testar condição de parada $t1_aux > t2_aux and goto loop if false
-                self.file.write("fimLoop:\n")
-
-                self.file.write("mul $t1_aux, $interator, $t2\n")
-                self.file.write("sub $t1, $t1, $t1_aux\n")
+                self.file.write("\tloop:\n")
+                self.file.write("\t\tli $t6, 1\n")
+                self.file.write("\t\tadd $t5, $t5, $t6\n")  # incrementando contador
+                self.file.write("\t\tsub $t3, $t3, $t4\n")
+                self.file.write("\t\tbgt $t3, $t4, loop\n")
+                self.file.write("\tmul $t3, $t5, $t2\n")
+                self.file.write("\tsub $t1, $t1, $t3\n")
 
         @self.pg.production('expression : NUMBER')
         def number(p):
